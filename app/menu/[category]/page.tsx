@@ -1,6 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { menu } from "@/data/menu";
+import { getProductsByCategory } from "@/services/productService";
+import type { Product } from "@/types/product";
+
+const categoryTitles: Record<Product["category"], string> = {
+  hot: "☕ Sıcak Kahveler",
+  cold: "🧊 Soğuk Kahveler",
+  dessert: "🧇 Waffle & Tatlı",
+  snack: "🥐 Atıştırmalıklar",
+  drink: "🥤 Soğuk İçecekler",
+  vitamin: "🍊 Vitamin Bar",
+};
 
 type Props = {
   params: Promise<{
@@ -10,12 +20,13 @@ type Props = {
 
 export default async function Page({ params }: Props) {
   const { category } = await params;
+  const categoryKey = category as Product["category"];
 
-  const data = menu[category as keyof typeof menu];
-
-  if (!data) {
+  if (!Object.hasOwn(categoryTitles, categoryKey)) {
     notFound();
   }
+
+  const products = await getProductsByCategory(categoryKey);
 
   return (
     <main className="min-h-screen bg-black text-white p-6">
@@ -31,12 +42,18 @@ export default async function Page({ params }: Props) {
 
         {/* Başlık */}
         <h1 className="text-4xl font-bold text-center text-amber-500 mb-10">
-          {data.title}
+          {categoryTitles[categoryKey]}
         </h1>
 
         {/* Ürünler */}
         <div className="space-y-5">
-          {data.products.map((product) => (
+          {products.length === 0 && (
+            <div className="rounded-2xl border border-amber-500/20 bg-zinc-900 p-5 text-center text-gray-400">
+              Bu kategoride henüz ürün bulunmuyor.
+            </div>
+          )}
+
+          {products.map((product) => (
             <div
               key={product.id}
               className="rounded-2xl border border-amber-500/20 bg-zinc-900 p-5 hover:border-amber-500 hover:bg-zinc-800 transition-all duration-300"
