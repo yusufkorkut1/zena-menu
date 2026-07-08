@@ -2,33 +2,7 @@ import Hero from "@/components/Hero";
 import Background from "@/components/Background";
 import CategoryCard from "@/components/CategoryCard";
 import Footer from "@/components/Footer";
-
-const categories = [
-  {
-    title: "☕ Sıcak Kahveler",
-    href: "/menu/hot",
-  },
-  {
-    title: "🧊 Soğuk Kahveler",
-    href: "/menu/cold",
-  },
-  {
-    title: "🧇 Waffle & Tatlı",
-    href: "/menu/dessert",
-  },
-  {
-    title: "🥐 Atıştırmalıklar",
-    href: "/menu/snack",
-  },
-  {
-    title: "🥤 Soğuk İçecekler",
-    href: "/menu/drink",
-  },
-  {
-    title: "🍊 Vitamin Bar",
-    href: "/menu/vitamin",
-  },
-];
+import { CATEGORIES, getCategoryLabel } from "@/constants/categories";
 
 export default function Home() {
   return (
@@ -43,12 +17,12 @@ export default function Home() {
 
           <div className="space-y-4">
 
-            {categories.map((category) => (
+            {CATEGORIES.map((category) => (
 
               <CategoryCard
-                key={category.title}
-                title={category.title}
-                href={category.href}
+                key={category.id}
+                title={getCategoryLabel(category)}
+                href={`/menu/${category.id}`}
               />
 
             ))}

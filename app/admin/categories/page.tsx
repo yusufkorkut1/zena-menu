@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { menu } from "@/data/menu";
+import { CATEGORIES, getCategoryLabel } from "@/constants/categories";
 
 export default function CategoriesPage() {
   return (
@@ -18,17 +18,17 @@ export default function CategoriesPage() {
         </h1>
 
         <div className="space-y-4">
-          {Object.values(menu).map((category) => (
+          {CATEGORIES.map((category) => (
             <div
-              key={category.title}
+              key={category.id}
               className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 flex items-center justify-between"
             >
               <span className="text-xl font-medium">
-                {category.title}
+                {getCategoryLabel(category)}
               </span>
 
               <span className="text-gray-400">
-                {category.products.length} ürün
+                {category.id}
               </span>
             </div>
           ))}
