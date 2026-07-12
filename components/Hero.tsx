@@ -1,19 +1,19 @@
 export default function Hero() {
   return (
-    <section className="text-center mb-14">
+    <section className="mb-12 text-center">
 
-      <p className="uppercase tracking-[8px] text-amber-500 text-sm mb-3">
+      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-amber-400 sm:tracking-[0.45em]">
         Ancient Coffee Experience
       </p>
 
-      <h1 className="text-7xl font-black tracking-[12px] text-amber-500">
+      <h1 className="text-6xl font-black tracking-[0.18em] text-amber-500 drop-shadow-[0_0_24px_rgba(245,158,11,0.22)] sm:text-7xl">
         ZENA
       </h1>
 
-      <div className="w-24 h-1 bg-amber-500 rounded-full mx-auto mt-5"></div>
+      <div className="mx-auto mt-5 h-px w-32 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
 
-      <p className="mt-6 text-gray-400">
-        QR Menu • Coffee • Dessert
+      <p className="mx-auto mt-6 max-w-xs text-sm leading-6 text-zinc-400">
+        QR Menü • Coffee • Dessert
       </p>
 
     </section>

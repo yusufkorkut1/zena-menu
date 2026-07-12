@@ -21,26 +21,29 @@ export default async function Page({ params }: Props) {
   const products = await getProductsByCategory(categoryData.id);
 
   return (
-    <main className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-3xl mx-auto">
+    <main className="min-h-screen bg-black px-5 py-6 text-white">
+      <div className="mx-auto max-w-3xl">
 
-        {/* Geri Butonu */}
         <Link
           href="/"
-          className="inline-block mb-8 text-amber-500 hover:text-amber-400 transition"
+          className="mb-8 inline-flex items-center rounded-full border border-amber-500/20 bg-zinc-950/80 px-4 py-2 text-sm font-semibold text-amber-400 transition hover:border-amber-400 hover:bg-amber-500 hover:text-black"
         >
           ← Ana Menü
         </Link>
 
-        {/* Başlık */}
-        <h1 className="text-4xl font-bold text-center text-amber-500 mb-10">
-          {getCategoryLabel(categoryData)}
-        </h1>
+        <header className="mb-10 text-center">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-amber-400">
+            ZENA Menü
+          </p>
 
-        {/* Ürünler */}
-        <div className="space-y-5">
+          <h1 className="text-4xl font-black leading-tight text-amber-500">
+            {getCategoryLabel(categoryData)}
+          </h1>
+        </header>
+
+        <div className="space-y-4">
           {products.length === 0 && (
-            <div className="rounded-2xl border border-amber-500/20 bg-zinc-900 p-5 text-center text-gray-400">
+            <div className="rounded-2xl border border-amber-500/20 bg-zinc-950/80 p-6 text-center text-zinc-400">
               Bu kategoride henüz ürün bulunmuyor.
             </div>
           )}
@@ -48,35 +51,49 @@ export default async function Page({ params }: Props) {
           {products.map((product) => (
             <div
               key={product.id}
-              className="rounded-2xl border border-amber-500/20 bg-zinc-900 p-5 hover:border-amber-500 hover:bg-zinc-800 transition-all duration-300"
+              className="overflow-hidden rounded-3xl border border-amber-500/15 bg-zinc-950/90 shadow-[0_18px_60px_rgba(0,0,0,0.26)] transition-all duration-300 hover:border-amber-400/60"
             >
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col gap-4 p-4 sm:flex-row">
 
-                <div className="flex items-start gap-4">
-                  {product.image && (
+                <div className="relative h-48 w-full shrink-0 overflow-hidden rounded-2xl border border-amber-500/10 bg-zinc-900 sm:h-28 sm:w-28">
+                  {product.image ? (
                     <Image
                       src={product.image}
                       alt={product.name}
-                      width={96}
-                      height={96}
-                      className="h-24 w-24 shrink-0 rounded-xl object-cover"
+                      width={160}
+                      height={160}
+                      className="h-full w-full object-cover"
                     />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.18),transparent_55%),#111] text-3xl text-amber-500">
+                      {categoryData.emoji}
+                    </div>
                   )}
-
-                  <div>
-                    <h2 className="text-xl font-semibold text-white">
-                      {product.name}
-                    </h2>
-
-                    <p className="text-gray-400 mt-2">
-                      {product.description}
-                    </p>
-                  </div>
                 </div>
 
-                <span className="text-2xl font-bold text-amber-500">
-                  {product.price} ₺
-                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <h2 className="text-lg font-bold leading-snug text-white">
+                        {product.name}
+                      </h2>
+
+                      {product.isPopular && (
+                        <span className="mt-2 inline-flex rounded-full bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-400">
+                          Popüler
+                        </span>
+                      )}
+                    </div>
+
+                    <span className="shrink-0 text-xl font-black text-amber-500">
+                      {product.price} ₺
+                    </span>
+                  </div>
+
+                  <p className="mt-3 break-words text-sm leading-6 text-zinc-400">
+                    {product.description}
+                  </p>
+                </div>
 
               </div>
             </div>

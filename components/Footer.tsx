@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="text-center py-10 text-gray-500 text-sm">
+    <footer className="py-10 text-center text-xs uppercase tracking-[0.25em] text-zinc-600">
 
       © 2026 ZENA Coffee
 

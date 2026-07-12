@@ -9,13 +9,13 @@ export default function Home() {
     <>
       <Background />
 
-      <main className="min-h-screen flex items-center justify-center px-6">
+      <main className="flex min-h-screen items-center justify-center px-5 py-10">
 
         <div className="w-full max-w-md">
 
           <Hero />
 
-          <div className="space-y-4">
+          <div className="space-y-3">
 
             {CATEGORIES.map((category) => (
 
