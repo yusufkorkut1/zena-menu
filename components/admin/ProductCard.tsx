@@ -15,6 +15,8 @@ export default function ProductCard({ product }: Props) {
   const [name, setName] = useState(product.name);
   const [description, setDescription] = useState(product.description);
   const [price, setPrice] = useState(String(product.price));
+  const [isPopular, setIsPopular] = useState(product.isPopular ?? false);
+  const [isFeatured, setIsFeatured] = useState(product.isFeatured ?? false);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -22,6 +24,8 @@ export default function ProductCard({ product }: Props) {
     setName(product.name);
     setDescription(product.description);
     setPrice(String(product.price));
+    setIsPopular(product.isPopular ?? false);
+    setIsFeatured(product.isFeatured ?? false);
     setIsEditing(false);
   }
 
@@ -41,6 +45,8 @@ export default function ProductCard({ product }: Props) {
         name: trimmedName,
         description: trimmedDescription,
         price: Number(price) || 0,
+        isPopular,
+        isFeatured,
       });
 
       setIsEditing(false);
@@ -99,6 +105,34 @@ export default function ProductCard({ product }: Props) {
             value={price}
             onChange={(e) => setPrice(e.target.value)}
           />
+
+          <label className="flex items-center gap-3 rounded-lg bg-zinc-800 p-3 text-sm text-gray-200">
+            <input
+              type="checkbox"
+              checked={isPopular}
+              disabled={loading}
+              onChange={(e) => setIsPopular(e.target.checked)}
+              className="h-4 w-4 accent-amber-500"
+            />
+
+            <span>
+              Popüler ürün
+            </span>
+          </label>
+
+          <label className="flex items-center gap-3 rounded-lg bg-zinc-800 p-3 text-sm text-gray-200">
+            <input
+              type="checkbox"
+              checked={isFeatured}
+              disabled={loading}
+              onChange={(e) => setIsFeatured(e.target.checked)}
+              className="h-4 w-4 accent-amber-500"
+            />
+
+            <span>
+              Günün önerisi
+            </span>
+          </label>
         </div>
 
         <div className="mt-4 flex justify-end gap-3">
@@ -127,9 +161,23 @@ export default function ProductCard({ product }: Props) {
   return (
     <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 p-5">
       <div>
-        <h3 className="text-lg font-semibold text-white">
-          {product.name}
-        </h3>
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="text-lg font-semibold text-white">
+            {product.name}
+          </h3>
+
+          {product.isPopular && (
+            <span className="rounded-full bg-amber-500/15 px-2 py-1 text-xs font-semibold text-amber-400">
+              Popüler
+            </span>
+          )}
+
+          {product.isFeatured && (
+            <span className="rounded-full bg-amber-500 px-2 py-1 text-xs font-semibold text-black">
+              Günün Önerisi
+            </span>
+          )}
+        </div>
 
         <p className="mt-1 text-sm text-gray-400">
           {product.description}

@@ -17,6 +17,8 @@ export interface Product {
 
   isPopular?: boolean;
 
+  isFeatured?: boolean;
+
   createdAt?: number;
 
   updatedAt?: number;

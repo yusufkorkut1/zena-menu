@@ -19,6 +19,8 @@ export default function ProductForm() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isPopular, setIsPopular] = useState(false);
+  const [isFeatured, setIsFeatured] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   const [category, setCategory] =
@@ -73,6 +75,8 @@ export default function ProductForm() {
         price: Number(price) || 0,
         category,
         available: true,
+        isPopular,
+        isFeatured,
       };
 
       if (imageUrl) {
@@ -90,6 +94,8 @@ export default function ProductForm() {
       setImageFile(null);
       setUploadProgress(null);
       setCategory("hot");
+      setIsPopular(false);
+      setIsFeatured(false);
 
       alert("Ürün başarıyla eklendi.");
     } catch (error) {
@@ -142,6 +148,34 @@ export default function ProductForm() {
             </option>
           ))}
         </select>
+
+        <label className="flex items-center gap-3 rounded-lg bg-zinc-800 p-3 text-sm text-gray-200">
+          <input
+            type="checkbox"
+            checked={isPopular}
+            disabled={loading}
+            onChange={(e) => setIsPopular(e.target.checked)}
+            className="h-4 w-4 accent-amber-500"
+          />
+
+          <span>
+            Popüler ürün
+          </span>
+        </label>
+
+        <label className="flex items-center gap-3 rounded-lg bg-zinc-800 p-3 text-sm text-gray-200">
+          <input
+            type="checkbox"
+            checked={isFeatured}
+            disabled={loading}
+            onChange={(e) => setIsFeatured(e.target.checked)}
+            className="h-4 w-4 accent-amber-500"
+          />
+
+          <span>
+            Günün önerisi
+          </span>
+        </label>
 
         <input
           type="file"

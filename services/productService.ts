@@ -4,9 +4,11 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  limit,
   query,
   updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
@@ -40,13 +42,66 @@ export async function getProductsByCategory(
   }));
 }
 
+export async function getFeaturedProduct(): Promise<Product | null> {
+  const q = query(
+    productsRef,
+    where("isFeatured", "==", true),
+    limit(1)
+  );
+
+  const snapshot = await getDocs(q);
+  const docItem = snapshot.docs[0];
+
+  if (!docItem) {
+    return null;
+  }
+
+  const product = {
+    id: docItem.id,
+    ...(docItem.data() as Omit<Product, "id">),
+  };
+
+  if (product.available !== true) {
+    return null;
+  }
+
+  return product;
+}
+
 export async function addProduct(
   product: Omit<Product, "id">
 ) {
+  const now = Date.now();
+
+  if (product.isFeatured) {
+    const featuredSnapshot = await getDocs(
+      query(productsRef, where("isFeatured", "==", true))
+    );
+    const batch = writeBatch(db);
+    const productRef = doc(productsRef);
+
+    featuredSnapshot.docs.forEach((docItem) => {
+      batch.update(docItem.ref, {
+        isFeatured: false,
+        updatedAt: now,
+      });
+    });
+
+    batch.set(productRef, {
+      ...product,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    await batch.commit();
+
+    return productRef;
+  }
+
   return await addDoc(productsRef, {
     ...product,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
+    createdAt: now,
+    updatedAt: now,
   });
 }
 
@@ -55,10 +110,35 @@ export async function updateProduct(
   product: Partial<Product>
 ) {
   const productRef = doc(db, "products", id);
+  const now = Date.now();
+
+  if (product.isFeatured) {
+    const featuredSnapshot = await getDocs(
+      query(productsRef, where("isFeatured", "==", true))
+    );
+    const batch = writeBatch(db);
+
+    featuredSnapshot.docs.forEach((docItem) => {
+      if (docItem.id !== id) {
+        batch.update(docItem.ref, {
+          isFeatured: false,
+          updatedAt: now,
+        });
+      }
+    });
+
+    batch.update(productRef, {
+      ...product,
+      updatedAt: now,
+    });
+
+    await batch.commit();
+    return;
+  }
 
   await updateDoc(productRef, {
     ...product,
-    updatedAt: Date.now(),
+    updatedAt: now,
   });
 }
 
