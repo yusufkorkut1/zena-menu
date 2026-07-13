@@ -2,7 +2,9 @@ import {
   addDoc,
   collection,
   deleteDoc,
+  deleteField,
   doc,
+  type FieldValue,
   getDocs,
   limit,
   query,
@@ -15,6 +17,18 @@ import { db } from "@/lib/firebase";
 import { Product } from "@/types/product";
 
 const productsRef = collection(db, "products");
+
+type TranslatableProductField = "nameEn" | "descriptionEn";
+
+type ProductUpdateOptions = {
+  deleteFields?: TranslatableProductField[];
+};
+
+type ProductUpdatePayload =
+  Partial<Omit<Product, TranslatableProductField>> &
+  Partial<Record<TranslatableProductField, string | FieldValue>> & {
+    updatedAt: number;
+  };
 
 export async function getProducts(): Promise<Product[]> {
   const snapshot = await getDocs(productsRef);
@@ -107,10 +121,19 @@ export async function addProduct(
 
 export async function updateProduct(
   id: string,
-  product: Partial<Product>
+  product: Partial<Product>,
+  options?: ProductUpdateOptions
 ) {
   const productRef = doc(db, "products", id);
   const now = Date.now();
+  const updateData: ProductUpdatePayload = {
+    ...product,
+    updatedAt: now,
+  };
+
+  options?.deleteFields?.forEach((field) => {
+    updateData[field] = deleteField();
+  });
 
   if (product.isFeatured) {
     const featuredSnapshot = await getDocs(
@@ -127,19 +150,13 @@ export async function updateProduct(
       }
     });
 
-    batch.update(productRef, {
-      ...product,
-      updatedAt: now,
-    });
+    batch.update(productRef, updateData);
 
     await batch.commit();
     return;
   }
 
-  await updateDoc(productRef, {
-    ...product,
-    updatedAt: now,
-  });
+  await updateDoc(productRef, updateData);
 }
 
 export async function deleteProduct(id: string) {

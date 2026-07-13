@@ -13,7 +13,11 @@ export default function ProductCard({ product }: Props) {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(product.name);
+  const [nameEn, setNameEn] = useState(product.nameEn ?? "");
   const [description, setDescription] = useState(product.description);
+  const [descriptionEn, setDescriptionEn] = useState(
+    product.descriptionEn ?? ""
+  );
   const [price, setPrice] = useState(String(product.price));
   const [isPopular, setIsPopular] = useState(product.isPopular ?? false);
   const [isFeatured, setIsFeatured] = useState(product.isFeatured ?? false);
@@ -22,7 +26,9 @@ export default function ProductCard({ product }: Props) {
 
   function handleCancel() {
     setName(product.name);
+    setNameEn(product.nameEn ?? "");
     setDescription(product.description);
+    setDescriptionEn(product.descriptionEn ?? "");
     setPrice(String(product.price));
     setIsPopular(product.isPopular ?? false);
     setIsFeatured(product.isFeatured ?? false);
@@ -32,6 +38,8 @@ export default function ProductCard({ product }: Props) {
   async function handleSave() {
     const trimmedName = name.trim();
     const trimmedDescription = description.trim();
+    const trimmedNameEn = nameEn.trim();
+    const trimmedDescriptionEn = descriptionEn.trim();
 
     if (!trimmedName || !trimmedDescription || !price) {
       alert("Lütfen tüm alanları doldurun.");
@@ -40,14 +48,28 @@ export default function ProductCard({ product }: Props) {
 
     try {
       setLoading(true);
-
-      await updateProduct(product.id, {
+      const productData: Partial<Product> = {
         name: trimmedName,
         description: trimmedDescription,
         price: Number(price) || 0,
         isPopular,
         isFeatured,
-      });
+      };
+      const deleteFields: Array<"nameEn" | "descriptionEn"> = [];
+
+      if (trimmedNameEn) {
+        productData.nameEn = trimmedNameEn;
+      } else if (product.nameEn) {
+        deleteFields.push("nameEn");
+      }
+
+      if (trimmedDescriptionEn) {
+        productData.descriptionEn = trimmedDescriptionEn;
+      } else if (product.descriptionEn) {
+        deleteFields.push("descriptionEn");
+      }
+
+      await updateProduct(product.id, productData, { deleteFields });
 
       setIsEditing(false);
       router.refresh();
@@ -93,10 +115,24 @@ export default function ProductCard({ product }: Props) {
             onChange={(e) => setName(e.target.value)}
           />
 
+          <input
+            className="w-full rounded-lg bg-zinc-800 p-3 outline-none"
+            placeholder="İngilizce ürün adı"
+            value={nameEn}
+            onChange={(e) => setNameEn(e.target.value)}
+          />
+
           <textarea
             className="w-full rounded-lg bg-zinc-800 p-3 outline-none"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+          />
+
+          <textarea
+            className="w-full rounded-lg bg-zinc-800 p-3 outline-none"
+            placeholder="İngilizce açıklama"
+            value={descriptionEn}
+            onChange={(e) => setDescriptionEn(e.target.value)}
           />
 
           <input

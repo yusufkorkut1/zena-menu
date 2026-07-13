@@ -16,7 +16,9 @@ export default function ProductForm() {
   const router = useRouter();
 
   const [name, setName] = useState("");
+  const [nameEn, setNameEn] = useState("");
   const [description, setDescription] = useState("");
+  const [descriptionEn, setDescriptionEn] = useState("");
   const [price, setPrice] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isPopular, setIsPopular] = useState(false);
@@ -68,6 +70,8 @@ export default function ProductForm() {
       const imageUrl = imageFile
         ? await uploadProductImage(imageFile)
         : undefined;
+      const trimmedNameEn = nameEn.trim();
+      const trimmedDescriptionEn = descriptionEn.trim();
 
       const productData: Omit<Product, "id"> = {
         name,
@@ -77,6 +81,10 @@ export default function ProductForm() {
         available: true,
         isPopular,
         isFeatured,
+        ...(trimmedNameEn ? { nameEn: trimmedNameEn } : {}),
+        ...(trimmedDescriptionEn
+          ? { descriptionEn: trimmedDescriptionEn }
+          : {}),
       };
 
       if (imageUrl) {
@@ -86,7 +94,9 @@ export default function ProductForm() {
       await addProduct(productData);
 
       setName("");
+      setNameEn("");
       setDescription("");
+      setDescriptionEn("");
       setPrice("");
 
       router.refresh();
@@ -120,11 +130,25 @@ export default function ProductForm() {
           onChange={(e) => setName(e.target.value)}
         />
 
+        <input
+          className="w-full rounded-lg bg-zinc-800 p-3 outline-none"
+          placeholder="İngilizce ürün adı"
+          value={nameEn}
+          onChange={(e) => setNameEn(e.target.value)}
+        />
+
         <textarea
           className="w-full rounded-lg bg-zinc-800 p-3 outline-none"
           placeholder="Açıklama"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+        />
+
+        <textarea
+          className="w-full rounded-lg bg-zinc-800 p-3 outline-none"
+          placeholder="İngilizce açıklama"
+          value={descriptionEn}
+          onChange={(e) => setDescriptionEn(e.target.value)}
         />
 
         <input
